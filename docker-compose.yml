@@ -11,7 +11,7 @@ services:
       - QT_X11_NO_MITSHM=1
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - /${PWD}:/ROS2 # user
+      - /${PWD}/worksplace/:/ros2_workspace # mount the ros2 project's workspace folder from this repo into the container 
     working_dir: "/ROS2"
     stdin_open: true
     tty: true
