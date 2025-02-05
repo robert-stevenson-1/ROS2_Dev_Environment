@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  ros_container:
+    image: osrf/ros:jazzy-desktop-full
+    container_name: ros_jazzy
+    network_mode: "host"
+    user: "root"
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /${PWD}:/ROS2 # user
+    working_dir: "/ROS2"
+    stdin_open: true
+    tty: true
