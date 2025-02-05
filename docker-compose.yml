@@ -12,6 +12,9 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /${PWD}/workspace/:/ros2_workspace # mount the ros2 project's workspace folder from this repo into the container 
+      - /dev/dri:/dev/dri  # Add GPU access
+    devices:
+      - "/dev/dri:/dev/dri"  # Ensures GPU acces
     working_dir: "/ros2_workspace"
     stdin_open: true
     tty: true
