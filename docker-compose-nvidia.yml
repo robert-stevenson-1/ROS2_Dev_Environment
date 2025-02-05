@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  ros_container:
+    image: osrf/ros:jazzy-desktop-full
+    container_name: ros_jazzy
+    network_mode: "host"
+    runtime: nvidia  # Enable NVIDIA runtime
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - NVIDIA_VISIBLE_DEVICES=all  # Pass all GPUs to the container
+      - NVIDIA_DRIVER_CAPABILITIES=all  # Allow full driver capabilities (including OpenGL, CUDA, and Vulkan)
+      - LIBGL_ALWAYS_INDIRECT=1  # Fix OpenGL rendering in some cases
+      - XDG_RUNTIME_DIR=/tmp/runtime-root  # Fixes Qt-based runtime issues
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /home/${USER}:/home/${USER}
+    devices:
+      - /dev/dri:/dev/dri  # Allows access to Direct Rendering Infrastructure (for OpenGL)
+    working_dir: "/root"
+    stdin_open: true
+    tty: true
+    user: "root"
+    command: >
+      bash -c "echo 'source /opt/ros/jazzy/setup.bash' >> /root/.bashrc && exec bash"
