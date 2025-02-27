@@ -6,17 +6,22 @@ services:
     container_name: ros_jazzy
     network_mode: "host"
     user: "root"
+    privileged: true
     environment:
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
+      - LIBGL_ALWAYS_INDIRECT=1  # Fixes OpenGL rendering inside Docker
+      - XDG_RUNTIME_DIR=/tmp/runtime-root  # Fixes Qt-based runtime issues
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - /${PWD}/workspace/:/ros2_workspace # mount the ros2 project's workspace folder from this repo into the container 
-      - /dev/dri:/dev/dri  # Add GPU access
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # Enables GUI access
+      - ${PWD}/workspace/:/ros2_workspace  # Mounts ROS 2 workspace
+      - /dev/dri:/dev/dri  # Gives access to GPU rendering (Mesa)
+      - /dev/kfd:/dev/kfd  # Required for AMD ROCm if used
     devices:
-      - "/dev/dri:/dev/dri"  # Ensures GPU acces
+      - /dev/dri:/dev/dri  # Direct Rendering Interface (DRI)
     working_dir: "/ros2_workspace"
     stdin_open: true
     tty: true
     command: >
       bash -c "echo 'source /opt/ros/jazzy/setup.bash' >> /root/.bashrc && exec bash"
+
