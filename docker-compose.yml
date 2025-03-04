@@ -20,8 +20,11 @@ services:
     working_dir: "/ros2_jazzy_workspace"
     stdin_open: true
     tty: true
+    entrypoint: ["/bin/bash", "-c", "xhost +local:docker && exec bash"]
     command: >
       bash -c "echo 'source /opt/ros/jazzy/setup.bash' >> /root/.bashrc && exec bash"
+    restart: unless-stopped
+
   ros_humble_container:
     image: osrf/ros:humble-desktop-full
     container_name: ros_humble
@@ -41,8 +44,10 @@ services:
     working_dir: "/ros2_humble_workspace"
     stdin_open: true
     tty: true
+    entrypoint: ["/bin/bash", "-c", "xhost +local:docker && exec bash"]
     command: >
       bash -c "echo 'source /opt/ros/humble/setup.bash' >> /root/.bashrc && exec bash"
+    restart: unless-stopped
 
   code-server:
     image: lscr.io/linuxserver/code-server:latest
@@ -67,12 +72,14 @@ services:
     image: nicolargo/glances:latest-full
     container_name: glances
     pid: host
-    network_mode: host
+    # network_mode: host
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock
     environment:
       - "GLANCES_OPT=-w"
+    ports:
+      - "2000:61208"
     # For nvidia GPUs
     # deploy:
     #   resources:
@@ -81,3 +88,5 @@ services:
     #         - driver: nvidia
     #           count: 1
     #           capabilities: [gpu]
+    restart: unless-stopped
+
