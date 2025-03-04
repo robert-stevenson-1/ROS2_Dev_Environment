@@ -5,11 +5,15 @@ A Basic Repo for a Docker focused ROS2 (Jazzy and Humble) development environmen
 >Make sure to `chmod +m enter_container.sh` so you don't need to used bash to run it.
 
 There also additonal containers setup (see below) in the compose stack to aid in working with the environments.
-- [Code Server](https://github.com/linuxserver/docker-code-server)
+- [Code Server](https://github.com/linuxserver/docker-code-server): VSCode in the browser (Port: [8443](http://localhost:8443))
+- [glances](https://github.com/nicolargo/glances): Another "TOP" UI that can be viewed in the broswer (Port: [2000](http://localhost:2000))
 
+It is recommended to connect to the ROS2 containers when using the
 
-It is recommended to connect to the ROS2 containers when using the GUI application for passthrough to the host system's display.
-
+To start all the containers, run this in the root directory of the repo:
+```sh
+docker compose -f docker-compose.yml up -d --force-recreate
+```
 
 ## Code Server Servie
 
