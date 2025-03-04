@@ -1,8 +1,15 @@
 # ROS2 Dev Environment
 
-A basic template Repo for a Docker focused ROS2 (Jazzy) development environment with a workspace folder for the ROS project files and some tool in the root directory for running everything.
+A Basic Repo for a Docker focused ROS2 (Jazzy and Humble) development environment with a workspace folder for each versions ROS project files and some tool in the root directory for running everything in the repo.
 
-Make sure to `chmod +m enter_container.sh` so you don't need to used bash to run it.
+>Make sure to `chmod +m enter_container.sh` so you don't need to used bash to run it.
+
+There also additonal containers setup (see below) in the compose stack to aid in working with the environments.
+- [Code Server](https://github.com/linuxserver/docker-code-server)
+
+
+It is recommended to connect to the ROS2 containers when using the GUI application for passthrough to the host system's display.
+
 
 ## Code Server Servie
 
