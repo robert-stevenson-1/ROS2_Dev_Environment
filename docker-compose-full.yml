@@ -1,0 +1,92 @@
+version: '3.9'
+
+services:
+  ros_jazzy_container:
+    image: osrf/ros:jazzy-desktop-full
+    container_name: ros_jazzy
+    network_mode: "host"
+    user: "root"
+    privileged: true
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ${PWD}/workspace-jazzy/:/ros2_jazzy_workspace  # Mounts ROS 2 workspace
+      - /dev/dri:/dev/dri  # Add GPU access
+      - /dev/kfd:/dev/kfd  # For AMD ROCm (if needed)
+    devices:
+      - /dev/dri:/dev/dri  # DRI for OpenGL rendering
+    working_dir: "/ros2_jazzy_workspace"
+    stdin_open: true
+    tty: true
+    entrypoint: ["/bin/bash", "-c"]
+    command: >
+      bash -c "echo 'source /opt/ros/jazzy/setup.bash' >> /root/.bashrc && exec bash"
+    restart: unless-stopped
+
+  ros_humble_container:
+    image: osrf/ros:humble-desktop-full
+    container_name: ros_humble
+    network_mode: "host"
+    user: "root"
+    privileged: true
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # Enables GUI access
+      - ${PWD}/workspace-humble/:/ros2_humble_workspace  # Mounts ROS 2 workspace
+      - /dev/dri:/dev/dri  # Gives access to GPU rendering (Mesa)
+      - /dev/kfd:/dev/kfd  # Required for AMD ROCm if used
+    devices:
+      - /dev/dri:/dev/dri  # Direct Rendering Interface (DRI)
+    working_dir: "/ros2_humble_workspace"
+    stdin_open: true
+    tty: true
+    entrypoint: ["/bin/bash", "-c"]
+    command: >
+      bash -c "echo 'source /opt/ros/humble/setup.bash' >> /root/.bashrc && exec bash"
+    restart: unless-stopped
+
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      # - PASSWORD=password #optional
+      # - HASHED_PASSWORD= #optional
+      - SUDO_PASSWORD=password #optional
+      # - SUDO_PASSWORD_HASH= #optional
+      # - PROXY_DOMAIN=code-server.my.domain #optional
+      - DEFAULT_WORKSPACE=/ros2_workspace #optional
+    volumes:
+      - ${PWD}/:/ros2_dev_environment
+    ports:
+      - 8443:8443
+    restart: unless-stopped
+
+  glances_monitoring:
+    image: nicolargo/glances:latest-full
+    container_name: glances
+    pid: host
+    # network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock
+    environment:
+      - "GLANCES_OPT=-w"
+    ports:
+      - "2000:61208"
+    # For nvidia GPUs
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    restart: unless-stopped
+
