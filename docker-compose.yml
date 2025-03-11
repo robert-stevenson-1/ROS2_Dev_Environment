@@ -20,7 +20,6 @@ services:
     working_dir: "/ros2_jazzy_workspace"
     stdin_open: true
     tty: true
-    entrypoint: ["/bin/bash", "-c", "xhost +local:docker && exec bash"]
     command: >
       bash -c "echo 'source /opt/ros/jazzy/setup.bash' >> /root/.bashrc && exec bash"
     restart: unless-stopped
@@ -44,49 +43,6 @@ services:
     working_dir: "/ros2_humble_workspace"
     stdin_open: true
     tty: true
-    entrypoint: ["/bin/bash", "-c", "xhost +local:docker && exec bash"]
     command: >
       bash -c "echo 'source /opt/ros/humble/setup.bash' >> /root/.bashrc && exec bash"
     restart: unless-stopped
-
-  code-server:
-    image: lscr.io/linuxserver/code-server:latest
-    container_name: code-server
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-      # - PASSWORD=password #optional
-      # - HASHED_PASSWORD= #optional
-      - SUDO_PASSWORD=password #optional
-      # - SUDO_PASSWORD_HASH= #optional
-      # - PROXY_DOMAIN=code-server.my.domain #optional
-      - DEFAULT_WORKSPACE=/ros2_workspace #optional
-    volumes:
-      - ${PWD}/:/ros2_dev_environment
-    ports:
-      - 8443:8443
-    restart: unless-stopped
-
-  glances_monitoring:
-    image: nicolargo/glances:latest-full
-    container_name: glances
-    pid: host
-    # network_mode: host
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock
-    environment:
-      - "GLANCES_OPT=-w"
-    ports:
-      - "2000:61208"
-    # For nvidia GPUs
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: 1
-    #           capabilities: [gpu]
-    restart: unless-stopped
-
