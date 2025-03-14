@@ -40,6 +40,9 @@ services:
       - /dev/kfd:/dev/kfd  # Required for AMD ROCm if used
     devices:
       - /dev/dri:/dev/dri  # Direct Rendering Interface (DRI)
+      - /dev/ttyUSB0 # Common USB device location to pass through
+      - /dev/ttyACM0 # Common USB-like device location to pass through
+      - /dev/input/js0 # Common Joysticks device location to pass through
     working_dir: "/ros2_humble_workspace"
     stdin_open: true
     tty: true
